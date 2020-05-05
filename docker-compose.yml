@@ -1,0 +1,11 @@
+version: '2.0'
+services:
+  # service to compile proto files
+  # https://github.com/znly/docker-protobuf
+  protoc:
+    image: znly/protoc:0.4.0
+    container_name: "protoc"
+    working_dir: "/code/proto"
+    command: ["--go_out=.", "-I.", "./sync.proto"]
+    volumes:
+      - ./:/code
