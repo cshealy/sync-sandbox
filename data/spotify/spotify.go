@@ -1,18 +1,17 @@
-package spotify
+package data
 
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/cshealy/sync-sandbox/data"
 	"net/http"
 	"strings"
 )
 
 // dao to communicate with spotify
 type SpotifyDAO struct {
-	BearerToken string
+	data.DAO
 }
-
-// TODO: get spotify dao
 
 // spotify auth response
 type spotifyAuth struct {
@@ -22,9 +21,9 @@ type spotifyAuth struct {
 	Scope       string `json:"scope"`
 }
 
-func NewSpotifyDAO() (*SpotifyDAO, error) {
+func NewDAO() (*SpotifyDAO, error) {
 	spotifyDAO := &SpotifyDAO{}
-	err := spotifyDAO.getSpotifyToken()
+	err := spotifyDAO.GetBearerToken()
 
 	if err != nil {
 		return nil, err
@@ -34,7 +33,7 @@ func NewSpotifyDAO() (*SpotifyDAO, error) {
 }
 
 // getSpotifyToken fetches a token from spotify
-func (s SpotifyDAO) getSpotifyToken() error {
+func (s *SpotifyDAO) GetBearerToken() error {
 	url := "https://accounts.spotify.com/api/token"
 	method := "POST"
 

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/cshealy/sync-sandbox/data/spotify"
+	data "github.com/cshealy/sync-sandbox/data/spotify"
 	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"
 )
@@ -27,7 +27,7 @@ func main() {
 	}).Info("initialized config")
 
 	// create dao for spotify
-	spotifyAuth, err := spotify.NewSpotifyDAO()
+	spotifyAuth, err := data.NewDAO()
 
 	// check for any errors while fetching the spotify bearer token
 	if err != nil {
