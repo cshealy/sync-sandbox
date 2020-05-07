@@ -1,5 +1,16 @@
 # Sync Sandbox #
 
+## Quickstart ##
+
+**Work in progress** - currently I'm in the process of working on the server, but have added the following command to spin up our docker container:
+
+```shell script
+sh start.sh --build
+```
+
+*Note:* currently you would be required to build the image locally, in the future I plan to add an ECR repo with terraform that will automatically push images in a Jenkins pipeline fashion.
+
+
 ## Compiling Protocol Buffers ##
 
 Protocol buffers can be found in the `proto/` directory, and contain definitions for gRPC calls. 

@@ -26,6 +26,8 @@ func main() {
 	var config Config
 	err := envconfig.Process("sync-sandbox", &config)
 
+	log.Info("%T", config.ServerPort)
+
 	// check for any errors while parsing environment variables
 	if err != nil {
 		log.Fatal(err.Error())
@@ -61,6 +63,8 @@ func RunServer(config Config) error {
 	if err != nil {
 		return err
 	}
+
+	// TODO: add HTTP mux
 
 	// create a new server
 	grpcServer := grpc.NewServer()

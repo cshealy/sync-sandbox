@@ -9,3 +9,9 @@ services:
     command: ["--go_out=plugins=grpc:.", "-I.", "./sync.proto"]
     volumes:
       - ./:/code
+
+  sync-sandbox-api:
+    image: sync-sandbox:1.0
+    container_name: "sync-sandbox-api"
+    ports:
+    - 50051:50051
