@@ -23,7 +23,7 @@ for arg in "$@"
 do
   if [[ "${arg}" = "--compile" ]]; then
     # compile proto files
-    docker-compose up --force-recreate --remove-orphans -d protoc
+    docker-compose up --force-recreate --remove-orphans protoc
     # TODO: have protoc recusively go through and compile
     break;
   elif [[ "${arg}" = "--mocks" ]]; then

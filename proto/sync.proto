@@ -1,7 +1,19 @@
 syntax = "proto3";
+
+import "google/api/annotations.proto";
+
 package protos;
 
 option go_package = "proto";
+
+service Tests {
+  // Stub test
+  rpc GetTest(Test) returns (Test) {
+    option (google.api.http) = {
+      get: "/test"
+    };
+  }
+}
 
 message Test {
   string name = 1;

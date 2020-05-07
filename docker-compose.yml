@@ -6,6 +6,6 @@ services:
     image: znly/protoc:0.4.0
     container_name: "protoc"
     working_dir: "/code/proto"
-    command: ["--go_out=.", "-I.", "./sync.proto"]
+    command: ["--go_out=plugins=grpc:.", "-I.", "./sync.proto"]
     volumes:
       - ./:/code

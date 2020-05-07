@@ -5,5 +5,5 @@ type DAO struct {
 }
 
 type ExternalAPI interface {
-	GetBearerToken() error
+	getToken() error
 }
