@@ -1,19 +1,27 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"net"
+
+	"github.com/cshealy/sync-sandbox/rpc"
+
 	data "github.com/cshealy/sync-sandbox/data/spotify"
 	pb "github.com/cshealy/sync-sandbox/proto"
-	"github.com/cshealy/sync-sandbox/rpc"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+
+	"net/http"
+
 	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-	"net"
 )
 
 // 12 factor config for establishing connections and other various attributes with env vars
 type Config struct {
-	ServerPort int `required:"true" default:"50051" split_words:"true"` // SERVER_PORT
+	GatewayPort int `required:"true" default:"8080" split_words:"true"`  // GATEWAY_PORT
+	ServerPort  int `required:"true" default:"50051" split_words:"true"` // SERVER_PORT
 }
 
 func init() {
@@ -25,8 +33,6 @@ func main() {
 	// process environment variables for config
 	var config Config
 	err := envconfig.Process("sync-sandbox", &config)
-
-	log.Info("%T", config.ServerPort)
 
 	// check for any errors while parsing environment variables
 	if err != nil {
@@ -50,9 +56,11 @@ func main() {
 		"spotify_auth": spotifyAuth,
 	}).Info("fetched auth token")
 
-	// start our server
-	if err := RunServer(config); err != nil {
-		// log the error and exit
+	// start gRPC server
+	go RunServer(config)
+
+	// start our gRPC gateway
+	if err = RunGateway(config); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -76,4 +84,24 @@ func RunServer(config Config) error {
 	grpcServer.Serve(listen)
 
 	return nil
+}
+
+// RunGateway starts to translate RESTful HTTP API into gRPC
+func RunGateway(config Config) error {
+
+	// create our context
+	ctx := context.Background()
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	// create the multiplexer
+	mux := runtime.NewServeMux()
+	opts := []grpc.DialOption{grpc.WithInsecure()}
+
+	err := pb.RegisterTestsHandlerFromEndpoint(ctx, mux, fmt.Sprintf(":%d", config.ServerPort), opts)
+	if err != nil {
+		return err
+	}
+
+	return http.ListenAndServe(fmt.Sprintf(":%d", config.GatewayPort), mux)
 }

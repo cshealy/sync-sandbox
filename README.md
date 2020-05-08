@@ -10,6 +10,22 @@ sh start.sh --build
 
 *Note:* currently you would be required to build the image locally, in the future I plan to add an ECR repo with terraform that will automatically push images in a Jenkins pipeline fashion.
 
+## gRPC Gateway ##
+
+The [gRPC gateway](https://github.com/grpc-ecosystem/grpc-gateway) translates a RESTful HTTP API into gRPC. Sync-sanbox accepts both gRPC and REST calls, which means you can easily perform the following to receive a response:
+
+```shell script
+# start the API
+sh start.sh
+
+# curl our test endpoint
+curl http://localhost:8080/test?name=echo
+
+# response
+{"name":"echo"}
+```
+
+This is just a placeholder for now, but will hold interesting info in the future.
 
 ## Compiling Protocol Buffers ##
 
