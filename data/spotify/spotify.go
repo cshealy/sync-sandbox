@@ -2,15 +2,21 @@ package data
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
-	"github.com/cshealy/sync-sandbox/data"
 	"net/http"
 	"strings"
+	"time"
+
+	"github.com/cshealy/sync-sandbox/data"
 )
 
 // dao to communicate with spotify
 type SpotifyDAO struct {
 	data.DAO
+	spotifyUsername string
+	spotifyPassword string
+	spotifyPlaylist string
 }
 
 // spotify auth response
@@ -21,8 +27,111 @@ type spotifyAuth struct {
 	Scope       string `json:"scope"`
 }
 
-func NewDAO() (*SpotifyDAO, error) {
-	spotifyDAO := &SpotifyDAO{}
+// spotify playlist response
+type spotifyPlaylist struct {
+	Collaborative bool   `json:"collaborative"`
+	Description   string `json:"description"`
+	ExternalUrls  struct {
+		Spotify string `json:"spotify"`
+	} `json:"external_urls"`
+	Followers struct {
+		Href  interface{} `json:"href"`
+		Total int         `json:"total"`
+	} `json:"followers"`
+	Href   string `json:"href"`
+	ID     string `json:"id"`
+	Images []struct {
+		URL string `json:"url"`
+	} `json:"images"`
+	Name  string `json:"name"`
+	Owner struct {
+		ExternalUrls struct {
+			Spotify string `json:"spotify"`
+		} `json:"external_urls"`
+		Href string `json:"href"`
+		ID   string `json:"id"`
+		Type string `json:"type"`
+		URI  string `json:"uri"`
+	} `json:"owner"`
+	Public     interface{} `json:"public"`
+	SnapshotID string      `json:"snapshot_id"`
+	Tracks     struct {
+		Href  string `json:"href"`
+		Items []struct {
+			AddedAt time.Time `json:"added_at"`
+			AddedBy struct {
+				ExternalUrls struct {
+					Spotify string `json:"spotify"`
+				} `json:"external_urls"`
+				Href string `json:"href"`
+				ID   string `json:"id"`
+				Type string `json:"type"`
+				URI  string `json:"uri"`
+			} `json:"added_by"`
+			IsLocal bool `json:"is_local"`
+			Track   struct {
+				Album struct {
+					AlbumType        string   `json:"album_type"`
+					AvailableMarkets []string `json:"available_markets"`
+					ExternalUrls     struct {
+						Spotify string `json:"spotify"`
+					} `json:"external_urls"`
+					Href   string `json:"href"`
+					ID     string `json:"id"`
+					Images []struct {
+						Height int    `json:"height"`
+						URL    string `json:"url"`
+						Width  int    `json:"width"`
+					} `json:"images"`
+					Name string `json:"name"`
+					Type string `json:"type"`
+					URI  string `json:"uri"`
+				} `json:"album"`
+				Artists []struct {
+					ExternalUrls struct {
+						Spotify string `json:"spotify"`
+					} `json:"external_urls"`
+					Href string `json:"href"`
+					ID   string `json:"id"`
+					Name string `json:"name"`
+					Type string `json:"type"`
+					URI  string `json:"uri"`
+				} `json:"artists"`
+				AvailableMarkets []string `json:"available_markets"`
+				DiscNumber       int      `json:"disc_number"`
+				DurationMs       int      `json:"duration_ms"`
+				Explicit         bool     `json:"explicit"`
+				ExternalIds      struct {
+					Isrc string `json:"isrc"`
+				} `json:"external_ids"`
+				ExternalUrls struct {
+					Spotify string `json:"spotify"`
+				} `json:"external_urls"`
+				Href        string `json:"href"`
+				ID          string `json:"id"`
+				Name        string `json:"name"`
+				Popularity  int    `json:"popularity"`
+				PreviewURL  string `json:"preview_url"`
+				TrackNumber int    `json:"track_number"`
+				Type        string `json:"type"`
+				URI         string `json:"uri"`
+			} `json:"track"`
+		} `json:"items"`
+		Limit    int         `json:"limit"`
+		Next     string      `json:"next"`
+		Offset   int         `json:"offset"`
+		Previous interface{} `json:"previous"`
+		Total    int         `json:"total"`
+	} `json:"tracks"`
+	Type string `json:"type"`
+	URI  string `json:"uri"`
+}
+
+func NewDAO(spotifyUsername, spotifyPassword string) (*SpotifyDAO, error) {
+	spotifyDAO := &SpotifyDAO{
+		spotifyUsername: spotifyUsername,
+		spotifyPassword: spotifyPassword,
+	}
 	err := spotifyDAO.GetBearerToken()
 
 	if err != nil {
@@ -32,7 +141,7 @@ func NewDAO() (*SpotifyDAO, error) {
 	return spotifyDAO, nil
 }
 
-// getSpotifyToken fetches a token from spotify
+// GetSpotifyToken fetches a token from spotify
 func (s *SpotifyDAO) GetBearerToken() error {
 	url := "https://accounts.spotify.com/api/token"
 	method := "POST"
@@ -43,9 +152,10 @@ func (s *SpotifyDAO) GetBearerToken() error {
 	req, err := http.NewRequest(method, url, payload)
 
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
-	req.Header.Add("Authorization", "Basic OGMyNzMzNmI0YWViNGU0ZWFhZmYzODNlZWE4ZTc0NGY6NmVlYWU0NDE4ZmFmNDVlODliZTU5ZDc0ODE5MzdkOTA=")
+
+	req.SetBasicAuth(s.spotifyUsername, s.spotifyPassword)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	res, err := client.Do(req)
@@ -55,6 +165,14 @@ func (s *SpotifyDAO) GetBearerToken() error {
 	if err != nil {
 		return err
 	}
-	s.BearerToken = spotifyAuth.AccessToken
+
+	// determine if the response was successful
+	if res.StatusCode >= 200 && res.StatusCode <= 299 {
+		s.BearerToken = spotifyAuth.AccessToken
+	} else {
+		// TODO: add more details to error response
+		return errors.New(fmt.Sprintf("failed to get spotify bearer token -- status_code: %d", res.StatusCode))
+	}
+
 	return nil
 }

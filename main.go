@@ -22,6 +22,10 @@ import (
 type Config struct {
 	GatewayPort int `required:"true" default:"8080" split_words:"true"`  // GATEWAY_PORT
 	ServerPort  int `required:"true" default:"50051" split_words:"true"` // SERVER_PORT
+
+	SpotifyPassword   string `required:"true" split_words:"true"` // SPOTIFY_PASSWORD
+	SpotifyPlaylistId string `required:"true" split_words:"true"` // SPOTIFY_PLAYLIST_ID
+	SpotifyUsername   string `required:"true" split_words:"true"` // SPOTIFY_USERNAME
 }
 
 func init() {
@@ -32,19 +36,15 @@ func main() {
 
 	// process environment variables for config
 	var config Config
-	err := envconfig.Process("sync-sandbox", &config)
+	err := envconfig.Process("", &config)
 
 	// check for any errors while parsing environment variables
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	log.WithFields(log.Fields{
-		"config": config,
-	}).Info("initialized config")
-
 	// create dao for spotify
-	spotifyAuth, err := data.NewDAO()
+	spotifyAuth, err := data.NewDAO(config.SpotifyUsername, config.SpotifyPassword)
 
 	// check for any errors while fetching the spotify bearer token
 	if err != nil {
@@ -71,8 +71,6 @@ func RunServer(config Config) error {
 	if err != nil {
 		return err
 	}
-
-	// TODO: add HTTP mux
 
 	// create a new server
 	grpcServer := grpc.NewServer()

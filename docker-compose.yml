@@ -13,9 +13,15 @@ services:
   sync-sandbox-api:
     image: sync-sandbox:1.0
     container_name: "sync-sandbox-api"
+    env_file:
+      - ~/dev.env
+      # The following variables should be setup locally as your auth credentials:
+      # SPOTIFY_USERNAME
+      # SPOTIFY_PASSWORD
     environment:
       - GATEWAY_PORT=8080
       - SERVER_PORT=50051
+      - SPOTIFY_PLAYLIST_ID=5G34TWU6P2i19eYWzrpj8M
     ports:
       - 8080:8080
       - 50051:50051
