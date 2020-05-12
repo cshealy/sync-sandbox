@@ -27,7 +27,7 @@ do
     break;
   elif [[ "${arg}" = "--mocks" ]]; then
     # generate mock files
-    mockgen -source="${PWD}"/data/api.go -destination="${PWD}"/data/mocks/dao.go -package=data
+    docker-compose up --force-recreate --remove-orphans gomock
     # TODO: add mock files needed for future tests
     break;
   fi
