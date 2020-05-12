@@ -2,6 +2,7 @@ syntax = "proto3";
 package protos;
 
 import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
 
 service Tests {
   // Stub test
@@ -10,8 +11,34 @@ service Tests {
       get: "/test"
     };
   }
+
+  //  Get some test tracks from spotify that will eventually be synced
+  rpc GetSpotifyPlaylist(google.protobuf.Empty) returns (SpotifyPlaylist) {
+    option (google.api.http) = {
+      get: "/spotify/playlist/tracks"
+    };
+  }
 }
 
+// Test message essentially is an echo that can be used to verify a test response
 message Test {
+
+  // name should be used as an echo
   string name = 1;
+
+}
+
+// SpotifyPlaylist can be used to retrieve tracks from the spotify playlist id
+message SpotifyPlaylist {
+
+  message artist {
+    string name = 1;
+  }
+
+  message track {
+    string name = 1;
+    repeated artist artists = 2;
+  }
+
+  repeated track tracks = 1;
 }

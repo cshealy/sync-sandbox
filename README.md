@@ -1,8 +1,10 @@
 # Sync Sandbox #
 
+Sync Sandbox is a gRPC & RESTful HTTP API which I use to try out various project ideas.
+
 ## Quickstart ##
 
-**Work in progress** - currently I'm in the process of working on the server, but have added the following command to spin up our docker container:
+Run the following command to build & spin up our docker container:
 
 ```shell script
 sh start.sh --build
@@ -26,6 +28,12 @@ curl http://localhost:8080/test?name=echo
 ```
 
 This is just a placeholder for now, but will hold interesting info in the future.
+
+*Update*: added an additional sandbox endpoint to view consolidated metadata about your spotify playlist: 
+
+```json
+{"tracks":[{"name":"Remedy","artists":[{"name":"Ferreck Dawn"},{"name":"Shyam P"}]},{"name":"Take Me Away","artists":[{"name":"Dombresky"},{"name":"Wh0"}]}]}
+```
 
 ## Compiling Protocol Buffers ##
 
@@ -52,10 +60,10 @@ sh start.sh --mocks
 ```
 
 Your new mock files should be found in the destination, and can now be used in unit tests.
+
 ## TODO ##
 
-- Docker-compose (API server)
 - Swagger docs
-- Setup API server
+- Setup sync logic
 - Metrics
 - Postman tests

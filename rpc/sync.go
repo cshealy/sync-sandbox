@@ -2,14 +2,36 @@ package rpc
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/cshealy/sync-sandbox/data"
+	"google.golang.org/grpc/codes"
+
+	data "github.com/cshealy/sync-sandbox/data/spotify"
+	"github.com/golang/protobuf/ptypes/empty"
+
 	pb "github.com/cshealy/sync-sandbox/proto"
 	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc/status"
 )
 
 type TestService struct {
-	data.DAO
+	*data.SpotifyDAO
+}
+
+// GetSpotifyPlaylist retrieves our spotify playlist and it's metadata, then returns it to the client
+func (svc TestService) GetSpotifyPlaylist(_ context.Context, _ *empty.Empty) (*pb.SpotifyPlaylist, error) {
+
+	// fetch the spotify playlist from spotify
+	spotifyPlaylist, err := svc.SpotifyDAO.GetPlaylist()
+
+	// if any error occurs during our spotify processing, send it back to the client
+	if err != nil {
+		// TODO: return improved errors
+		return nil, status.Error(codes.Unknown,
+			fmt.Sprintf("unable to retrieve spotify playlist -- %s", svc.SpotifyDAO.SpotifyPlaylist))
+	}
+
+	return spotifyPlaylist, nil
 }
 
 // GetTest is an echo endpoint until I put more interesting logic into here

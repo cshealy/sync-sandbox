@@ -7,6 +7,7 @@ import (
 	context "context"
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
+	empty "github.com/golang/protobuf/ptypes/empty"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
 	math "math"
@@ -23,7 +24,9 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
+// Test message essentially is an echo that can be used to verify a test response
 type Test struct {
+	// name should be used as an echo
 	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -62,23 +65,161 @@ func (m *Test) GetName() string {
 	return ""
 }
 
+// SpotifyPlaylist can be used to retrieve tracks from the spotify playlist id
+type SpotifyPlaylist struct {
+	Tracks               []*SpotifyPlaylistTrack `protobuf:"bytes,1,rep,name=tracks,proto3" json:"tracks,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
+	XXX_unrecognized     []byte                  `json:"-"`
+	XXX_sizecache        int32                   `json:"-"`
+}
+
+func (m *SpotifyPlaylist) Reset()         { *m = SpotifyPlaylist{} }
+func (m *SpotifyPlaylist) String() string { return proto.CompactTextString(m) }
+func (*SpotifyPlaylist) ProtoMessage()    {}
+func (*SpotifyPlaylist) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5273b98214de8075, []int{1}
+}
+
+func (m *SpotifyPlaylist) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SpotifyPlaylist.Unmarshal(m, b)
+}
+func (m *SpotifyPlaylist) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SpotifyPlaylist.Marshal(b, m, deterministic)
+}
+func (m *SpotifyPlaylist) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SpotifyPlaylist.Merge(m, src)
+}
+func (m *SpotifyPlaylist) XXX_Size() int {
+	return xxx_messageInfo_SpotifyPlaylist.Size(m)
+}
+func (m *SpotifyPlaylist) XXX_DiscardUnknown() {
+	xxx_messageInfo_SpotifyPlaylist.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SpotifyPlaylist proto.InternalMessageInfo
+
+func (m *SpotifyPlaylist) GetTracks() []*SpotifyPlaylistTrack {
+	if m != nil {
+		return m.Tracks
+	}
+	return nil
+}
+
+type SpotifyPlaylistArtist struct {
+	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *SpotifyPlaylistArtist) Reset()         { *m = SpotifyPlaylistArtist{} }
+func (m *SpotifyPlaylistArtist) String() string { return proto.CompactTextString(m) }
+func (*SpotifyPlaylistArtist) ProtoMessage()    {}
+func (*SpotifyPlaylistArtist) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5273b98214de8075, []int{1, 0}
+}
+
+func (m *SpotifyPlaylistArtist) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SpotifyPlaylistArtist.Unmarshal(m, b)
+}
+func (m *SpotifyPlaylistArtist) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SpotifyPlaylistArtist.Marshal(b, m, deterministic)
+}
+func (m *SpotifyPlaylistArtist) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SpotifyPlaylistArtist.Merge(m, src)
+}
+func (m *SpotifyPlaylistArtist) XXX_Size() int {
+	return xxx_messageInfo_SpotifyPlaylistArtist.Size(m)
+}
+func (m *SpotifyPlaylistArtist) XXX_DiscardUnknown() {
+	xxx_messageInfo_SpotifyPlaylistArtist.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SpotifyPlaylistArtist proto.InternalMessageInfo
+
+func (m *SpotifyPlaylistArtist) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+type SpotifyPlaylistTrack struct {
+	Name                 string                   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Artists              []*SpotifyPlaylistArtist `protobuf:"bytes,2,rep,name=artists,proto3" json:"artists,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
+	XXX_unrecognized     []byte                   `json:"-"`
+	XXX_sizecache        int32                    `json:"-"`
+}
+
+func (m *SpotifyPlaylistTrack) Reset()         { *m = SpotifyPlaylistTrack{} }
+func (m *SpotifyPlaylistTrack) String() string { return proto.CompactTextString(m) }
+func (*SpotifyPlaylistTrack) ProtoMessage()    {}
+func (*SpotifyPlaylistTrack) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5273b98214de8075, []int{1, 1}
+}
+
+func (m *SpotifyPlaylistTrack) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SpotifyPlaylistTrack.Unmarshal(m, b)
+}
+func (m *SpotifyPlaylistTrack) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SpotifyPlaylistTrack.Marshal(b, m, deterministic)
+}
+func (m *SpotifyPlaylistTrack) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SpotifyPlaylistTrack.Merge(m, src)
+}
+func (m *SpotifyPlaylistTrack) XXX_Size() int {
+	return xxx_messageInfo_SpotifyPlaylistTrack.Size(m)
+}
+func (m *SpotifyPlaylistTrack) XXX_DiscardUnknown() {
+	xxx_messageInfo_SpotifyPlaylistTrack.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SpotifyPlaylistTrack proto.InternalMessageInfo
+
+func (m *SpotifyPlaylistTrack) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *SpotifyPlaylistTrack) GetArtists() []*SpotifyPlaylistArtist {
+	if m != nil {
+		return m.Artists
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*Test)(nil), "protos.Test")
+	proto.RegisterType((*SpotifyPlaylist)(nil), "protos.SpotifyPlaylist")
+	proto.RegisterType((*SpotifyPlaylistArtist)(nil), "protos.SpotifyPlaylist.artist")
+	proto.RegisterType((*SpotifyPlaylistTrack)(nil), "protos.SpotifyPlaylist.track")
 }
 
 func init() { proto.RegisterFile("sync.proto", fileDescriptor_5273b98214de8075) }
 
 var fileDescriptor_5273b98214de8075 = []byte{
-	// 137 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2a, 0xae, 0xcc, 0x4b,
-	0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x03, 0x53, 0xc5, 0x52, 0x32, 0xe9, 0xf9, 0xf9,
-	0xe9, 0x39, 0xa9, 0xfa, 0x89, 0x05, 0x99, 0xfa, 0x89, 0x79, 0x79, 0xf9, 0x25, 0x89, 0x25, 0x99,
-	0xf9, 0x79, 0xc5, 0x10, 0x55, 0x4a, 0x52, 0x5c, 0x2c, 0x21, 0xa9, 0xc5, 0x25, 0x42, 0x42, 0x5c,
-	0x2c, 0x79, 0x89, 0xb9, 0xa9, 0x12, 0x8c, 0x0a, 0x8c, 0x1a, 0x9c, 0x41, 0x60, 0xb6, 0x91, 0x2d,
-	0x17, 0x2b, 0x48, 0xae, 0x58, 0xc8, 0x84, 0x8b, 0xdd, 0x3d, 0xb5, 0x04, 0xac, 0x8e, 0x07, 0xa2,
-	0xaf, 0x58, 0x0f, 0xc4, 0x93, 0x42, 0xe1, 0x29, 0xf1, 0x36, 0x5d, 0x7e, 0x32, 0x99, 0x89, 0x5d,
-	0x88, 0x55, 0xbf, 0x24, 0xb5, 0xb8, 0x24, 0x09, 0xe2, 0x00, 0x63, 0x40, 0x00, 0x00, 0x00, 0xff,
-	0xff, 0x2e, 0xb4, 0x8a, 0xd0, 0x95, 0x00, 0x00, 0x00,
+	// 281 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x91, 0x41, 0x4e, 0xc3, 0x30,
+	0x10, 0x45, 0x95, 0xd2, 0x24, 0x62, 0x00, 0x21, 0x79, 0x01, 0x91, 0x29, 0x28, 0xca, 0xaa, 0x2b,
+	0x5b, 0x2a, 0x20, 0x71, 0x01, 0xd4, 0x2d, 0x0a, 0x70, 0x00, 0xb7, 0x72, 0xa3, 0x88, 0xd4, 0xb6,
+	0x32, 0xc3, 0x22, 0x5b, 0xae, 0xc0, 0x1d, 0xb8, 0x05, 0xa7, 0xe0, 0x0a, 0x1c, 0x04, 0xc5, 0x4e,
+	0x16, 0x54, 0xed, 0xca, 0x1e, 0xfd, 0x37, 0xf3, 0x3d, 0xdf, 0x00, 0xd8, 0x99, 0xb5, 0x70, 0xad,
+	0x25, 0xcb, 0x12, 0x7f, 0x20, 0x9f, 0x55, 0xd6, 0x56, 0x8d, 0x96, 0xca, 0xd5, 0x52, 0x19, 0x63,
+	0x49, 0x51, 0x6d, 0x0d, 0x06, 0x8a, 0x5f, 0x0d, 0xaa, 0xaf, 0x56, 0xef, 0x1b, 0xa9, 0xb7, 0x8e,
+	0xba, 0x20, 0x16, 0x1c, 0xa6, 0x2f, 0x1a, 0x89, 0x31, 0x98, 0x1a, 0xb5, 0xd5, 0x59, 0x94, 0x47,
+	0xf3, 0xe3, 0xd2, 0xdf, 0x8b, 0xef, 0x08, 0xce, 0x9f, 0x9d, 0xa5, 0x7a, 0xd3, 0x3d, 0x35, 0xaa,
+	0x6b, 0x6a, 0x24, 0x76, 0x0f, 0x09, 0xb5, 0x6a, 0xfd, 0x86, 0x59, 0x94, 0x1f, 0xcd, 0x4f, 0x16,
+	0xd7, 0x61, 0x0e, 0x8a, 0x1d, 0x50, 0x78, 0xaa, 0x1c, 0x60, 0x3e, 0x83, 0x44, 0xb5, 0x54, 0xef,
+	0x37, 0xe2, 0xaf, 0x10, 0x7b, 0x6e, 0x9f, 0xc8, 0x1e, 0x20, 0x0d, 0xad, 0x98, 0x4d, 0xbc, 0xe5,
+	0xcd, 0x21, 0xcb, 0x80, 0x95, 0x23, 0xbe, 0xf8, 0x8a, 0x20, 0xee, 0x97, 0x43, 0x76, 0x07, 0xe9,
+	0x52, 0x93, 0x5f, 0xf4, 0x74, 0xec, 0xee, 0x2b, 0xfe, 0xaf, 0x2a, 0xce, 0x3e, 0x7e, 0x7e, 0x3f,
+	0x27, 0x29, 0x8b, 0x25, 0xf5, 0x68, 0x05, 0x6c, 0xa9, 0x69, 0x37, 0x81, 0x0b, 0x11, 0xf2, 0x14,
+	0x63, 0x9e, 0xe2, 0xb1, 0xcf, 0x93, 0x5f, 0x1e, 0x78, 0x56, 0x91, 0xfb, 0xa9, 0x9c, 0x65, 0x12,
+	0x83, 0x22, 0xdd, 0x20, 0xc9, 0x90, 0xce, 0x2a, 0xfc, 0xe3, 0xed, 0x5f, 0x00, 0x00, 0x00, 0xff,
+	0xff, 0xce, 0x9a, 0x14, 0x92, 0xdc, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -95,6 +236,8 @@ const _ = grpc.SupportPackageIsVersion4
 type TestsClient interface {
 	// Stub test
 	GetTest(ctx context.Context, in *Test, opts ...grpc.CallOption) (*Test, error)
+	//  Get some test tracks from spotify that will eventually be synced
+	GetSpotifyPlaylist(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*SpotifyPlaylist, error)
 }
 
 type testsClient struct {
@@ -114,10 +257,21 @@ func (c *testsClient) GetTest(ctx context.Context, in *Test, opts ...grpc.CallOp
 	return out, nil
 }
 
+func (c *testsClient) GetSpotifyPlaylist(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*SpotifyPlaylist, error) {
+	out := new(SpotifyPlaylist)
+	err := c.cc.Invoke(ctx, "/protos.Tests/GetSpotifyPlaylist", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TestsServer is the server API for Tests service.
 type TestsServer interface {
 	// Stub test
 	GetTest(context.Context, *Test) (*Test, error)
+	//  Get some test tracks from spotify that will eventually be synced
+	GetSpotifyPlaylist(context.Context, *empty.Empty) (*SpotifyPlaylist, error)
 }
 
 func RegisterTestsServer(s *grpc.Server, srv TestsServer) {
@@ -142,6 +296,24 @@ func _Tests_GetTest_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Tests_GetSpotifyPlaylist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TestsServer).GetSpotifyPlaylist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protos.Tests/GetSpotifyPlaylist",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TestsServer).GetSpotifyPlaylist(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Tests_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "protos.Tests",
 	HandlerType: (*TestsServer)(nil),
@@ -149,6 +321,10 @@ var _Tests_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTest",
 			Handler:    _Tests_GetTest_Handler,
+		},
+		{
+			MethodName: "GetSpotifyPlaylist",
+			Handler:    _Tests_GetSpotifyPlaylist_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

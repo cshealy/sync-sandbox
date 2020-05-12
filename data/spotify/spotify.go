@@ -8,6 +8,10 @@ import (
 	"strings"
 	"time"
 
+	pb "github.com/cshealy/sync-sandbox/proto"
+
+	log "github.com/sirupsen/logrus"
+
 	"github.com/cshealy/sync-sandbox/data"
 )
 
@@ -16,7 +20,7 @@ type SpotifyDAO struct {
 	data.DAO
 	spotifyUsername string
 	spotifyPassword string
-	spotifyPlaylist string
+	SpotifyPlaylist string
 }
 
 // spotify auth response
@@ -127,12 +131,14 @@ type spotifyPlaylist struct {
 	URI  string `json:"uri"`
 }
 
-func NewDAO(spotifyUsername, spotifyPassword string) (*SpotifyDAO, error) {
+// NewDAO creates a new spotify data access object for interacting with spotify
+func NewDAO(spotifyUsername, spotifyPassword, spotifyPlaylistId string) (*SpotifyDAO, error) {
 	spotifyDAO := &SpotifyDAO{
 		spotifyUsername: spotifyUsername,
 		spotifyPassword: spotifyPassword,
+		SpotifyPlaylist: spotifyPlaylistId,
 	}
-	err := spotifyDAO.GetBearerToken()
+	err := spotifyDAO.getBearerToken()
 
 	if err != nil {
 		return nil, err
@@ -142,7 +148,7 @@ func NewDAO(spotifyUsername, spotifyPassword string) (*SpotifyDAO, error) {
 }
 
 // GetSpotifyToken fetches a token from spotify
-func (s *SpotifyDAO) GetBearerToken() error {
+func (s *SpotifyDAO) getBearerToken() error {
 	url := "https://accounts.spotify.com/api/token"
 	method := "POST"
 
@@ -167,12 +173,78 @@ func (s *SpotifyDAO) GetBearerToken() error {
 	}
 
 	// determine if the response was successful
-	if res.StatusCode >= 200 && res.StatusCode <= 299 {
+	if res.StatusCode >= 200 || res.StatusCode <= 299 {
 		s.BearerToken = spotifyAuth.AccessToken
+
+		// refresh the bearer token if the current utc time is after token expiration
+		s.TokenExpiration = time.Now().UTC().Add(time.Minute * time.Duration(spotifyAuth.ExpiresIn))
 	} else {
 		// TODO: add more details to error response
 		return errors.New(fmt.Sprintf("failed to get spotify bearer token -- status_code: %d", res.StatusCode))
 	}
 
 	return nil
+}
+
+// GetPlaylist will get the playlist metadata passed in through docker-compose
+func (s *SpotifyDAO) GetPlaylist() (*pb.SpotifyPlaylist, error) {
+	url := fmt.Sprintf("https://api.spotify.com/v1/playlists/%s", s.SpotifyPlaylist)
+	method := "GET"
+
+	client := &http.Client{}
+	req, err := http.NewRequest(method, url, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", s.BearerToken))
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	res, err := client.Do(req)
+	log.Info(res)
+	log.Info(res.StatusCode)
+	defer res.Body.Close()
+	var spotifyPlaylist *spotifyPlaylist
+	err = json.NewDecoder(res.Body).Decode(&spotifyPlaylist)
+	if err != nil {
+		return nil, err
+	}
+
+	// determine if the response was successful
+	if res.StatusCode < 200 || res.StatusCode > 299 {
+		return nil, errors.New(fmt.Sprintf("failed to get playlist -- status_code: %d", res.StatusCode))
+	}
+
+	// parse the spotify playlist response
+	var spotifyPlaylistTracks []*pb.SpotifyPlaylistTrack
+	for _, track := range spotifyPlaylist.Tracks.Items {
+
+		// collect all of the artists for this track
+		var trackArtists []*pb.SpotifyPlaylistArtist
+		for _, artist := range track.Track.Artists {
+			trackArtists = append(trackArtists, &pb.SpotifyPlaylistArtist{
+				Name: artist.Name,
+			})
+		}
+
+		// add a new track to the playlist response
+		spotifyPlaylistTracks = append(spotifyPlaylistTracks, &pb.SpotifyPlaylistTrack{
+			Name:    track.Track.Name,
+			Artists: trackArtists,
+		})
+
+	}
+
+	return &pb.SpotifyPlaylist{
+		Tracks: spotifyPlaylistTracks,
+	}, nil
+}
+
+// refreshToken checks if the current time is after spotify's expiration time,
+// then fetches a new bearer token if needed
+func (s *SpotifyDAO) refreshToken() {
+	if s.TokenExpiration.Before(time.Now().UTC()) {
+		s.getBearerToken()
+	}
 }

@@ -44,29 +44,32 @@ func main() {
 	}
 
 	// create dao for spotify
-	spotifyAuth, err := data.NewDAO(config.SpotifyUsername, config.SpotifyPassword)
+	spotifyDAO, err := data.NewDAO(config.SpotifyUsername, config.SpotifyPassword, config.SpotifyPlaylistId)
 
 	// check for any errors while fetching the spotify bearer token
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	// confirm spotify dao is generated
 	log.WithFields(log.Fields{
-		"spotify_auth": spotifyAuth,
-	}).Info("fetched auth token")
+		"grpc_server": fmt.Sprintf("http://localhost:%d", config.ServerPort),
+	}).Info("starting gRPC server")
 
 	// start gRPC server
-	go RunServer(config)
+	go runServer(config, spotifyDAO)
+
+	log.WithFields(log.Fields{
+		"grpc_gateway": fmt.Sprintf("http://localhost:%d", config.GatewayPort),
+	}).Info("starting gRPC gateway")
 
 	// start our gRPC gateway
-	if err = RunGateway(config); err != nil {
+	if err = runGateway(config); err != nil {
 		log.Fatal(err)
 	}
 }
 
 // RunServer will start a new server and begin listening using the port provided by our config
-func RunServer(config Config) error {
+func runServer(config Config, spotifyDAO *data.SpotifyDAO) error {
 	listen, err := net.Listen("tcp", fmt.Sprintf(":%d", config.ServerPort))
 	if err != nil {
 		return err
@@ -76,7 +79,9 @@ func RunServer(config Config) error {
 	grpcServer := grpc.NewServer()
 
 	// register TestService
-	pb.RegisterTestsServer(grpcServer, &rpc.TestService{})
+	pb.RegisterTestsServer(grpcServer, &rpc.TestService{
+		SpotifyDAO: spotifyDAO,
+	})
 
 	// begin listening
 	grpcServer.Serve(listen)
@@ -85,7 +90,7 @@ func RunServer(config Config) error {
 }
 
 // RunGateway starts to translate RESTful HTTP API into gRPC
-func RunGateway(config Config) error {
+func runGateway(config Config) error {
 
 	// create our context
 	ctx := context.Background()
