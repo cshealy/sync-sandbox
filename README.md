@@ -31,7 +31,14 @@ This is just a placeholder for now, but will hold interesting info in the future
 
 *Update*: added an additional sandbox endpoint to view consolidated metadata about your spotify playlist: 
 
-```json
+```shell script
+# start the API
+sh start.sh
+
+# curl our test endpoint
+curl http://localhost:8080/spotify/playlist/tracks
+
+# response
 {"tracks":[{"name":"Remedy","artists":[{"name":"Ferreck Dawn"},{"name":"Shyam P"}]},{"name":"Take Me Away","artists":[{"name":"Dombresky"},{"name":"Wh0"}]}]}
 ```
 
