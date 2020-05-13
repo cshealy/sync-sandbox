@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"os"
+	"strings"
 
 	"github.com/cshealy/sync-sandbox/rpc"
 
@@ -20,6 +22,8 @@ import (
 
 // 12 factor config for establishing connections and other various attributes with env vars
 type Config struct {
+	LogLevel string `required:"true" default:"info" split_words:"true"` // LOG_LEVEL
+
 	GatewayPort int `required:"true" default:"8080" split_words:"true"`  // GATEWAY_PORT
 	ServerPort  int `required:"true" default:"50051" split_words:"true"` // SERVER_PORT
 
@@ -28,20 +32,40 @@ type Config struct {
 	SpotifyUsername   string `required:"true" split_words:"true"` // SPOTIFY_USERNAME
 }
 
-func init() {
-	// TODO: set log level from config
-}
+var config Config
 
-func main() {
+func init() {
 
 	// process environment variables for config
-	var config Config
 	err := envconfig.Process("", &config)
 
 	// check for any errors while parsing environment variables
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+
+	// Log as JSON instead of the default ASCII formatter.
+	log.SetFormatter(&log.JSONFormatter{})
+
+	// Output to stdout instead of the default stderr
+	log.SetOutput(os.Stdout)
+
+	// Only log the severity set in env var
+	// https://github.com/sirupsen/logrus/blob/39a5ad12948d094ddd5d5a6a4a4281f453d77562/logrus.go#L25
+	logLevel, err := log.ParseLevel(strings.ToLower(config.LogLevel))
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.SetLevel(logLevel)
+
+	log.WithFields(log.Fields{
+		"log_level": logLevel,
+	}).Info("set log level")
+}
+
+func main() {
 
 	// create dao for spotify
 	spotifyDAO, err := data.NewDAO(config.SpotifyUsername, config.SpotifyPassword, config.SpotifyPlaylistId)

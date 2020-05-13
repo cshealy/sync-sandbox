@@ -28,6 +28,7 @@ services:
       # SPOTIFY_USERNAME
       # SPOTIFY_PASSWORD
     environment:
+      - LOG_LEVEL=info
       - GATEWAY_PORT=8080
       - SERVER_PORT=50051
       - SPOTIFY_PLAYLIST_ID=5G34TWU6P2i19eYWzrpj8M
