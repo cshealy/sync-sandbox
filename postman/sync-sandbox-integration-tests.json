@@ -1,0 +1,127 @@
+{
+	"info": {
+		"_postman_id": "da6b4ae4-ab30-4fe6-9715-235b3e5bbb5e",
+		"name": "sync-sandbox",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET",
+			"item": [
+				{
+					"name": "Test",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "95ed80a7-83c3-488d-9553-9dc6911ae689",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Check if response looks as we expect it to\", function() {",
+									"    var jsonData = pm.response.json();",
+									"    ",
+									"    // expect to have the key 'name'",
+									"    pm.expect(jsonData).to.have.property(\"name\").to.be.an(\"string\");",
+									"    ",
+									"    // expect the value of name to be 'echo'",
+									"    pm.expect(jsonData.name).to.equal(\"echo\");",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/test?name=echo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"test"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "echo"
+								}
+							]
+						},
+						"description": "This is a test request that acts the same way an echo would."
+					},
+					"response": []
+				},
+				{
+					"name": "SpotifyPlaylist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "41e9007a-a852-4124-a1c6-5c9d09bdf010",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Check if response looks as we expect it to\", function() {",
+									"    var jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData).to.have.property(\"tracks\").to.be.an(\"array\");",
+									"    ",
+									"    // expect tracks to be an array of songs",
+									"    for (i = 0; i < jsonData.tracks.length; i++) {",
+									"",
+									"        // check for track name",
+									"        pm.expect(jsonData.tracks[i]).to.have.property(\"name\").to.be.an(\"string\");",
+									"",
+									"        // check for artist array",
+									"        pm.expect(jsonData.tracks[i]).to.have.property(\"artists\").to.be.an(\"array\");",
+									"",
+									"        for (j = 0; j < jsonData.tracks[i].artists.length; j++) {",
+									"            // check for artist name",
+									"            pm.expect(jsonData.tracks[i].artists[j]).to.have.property(\"name\").to.be.an(\"string\");",
+									"        } ",
+									"    }",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/spotify/playlist/tracks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"spotify",
+								"playlist",
+								"tracks"
+							]
+						},
+						"description": "Return Spotify playlist songs and artists from the playlist given in docker-compose."
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
