@@ -68,9 +68,13 @@ sh start.sh --mocks
 
 Your new mock files should be found in the destination, and can now be used in unit tests.
 
+## Postman Tests ##
+
+Postman integration tests are documented and found [here](https://github.com/cshealy/sync-sandbox/tree/master/postman).
+
 ## TODO ##
 
+- Automate tests
 - Swagger docs
 - Setup sync logic
 - Metrics
-- Postman tests

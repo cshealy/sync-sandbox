@@ -20,4 +20,4 @@ Tests are exported when a collection is exported. This can be be achieved by cli
 sync-sandbox collection > ... > Export > <postman directory>
 ```
 
-*Note: make sure this is committed to the sync-sandbox repo*
+* Note: make sure this is committed to the sync-sandbox repo *
