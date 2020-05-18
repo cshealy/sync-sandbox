@@ -1,0 +1,108 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "sync.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/spotify/playlist/tracks": {
+      "get": {
+        "summary": "Get some test tracks from spotify that will eventually be synced",
+        "operationId": "GetSpotifyPlaylist",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protosSpotifyPlaylist"
+            }
+          }
+        },
+        "tags": [
+          "Tests"
+        ]
+      }
+    },
+    "/test": {
+      "get": {
+        "summary": "Stub test",
+        "operationId": "GetTest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protosTest"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "description": "name should be used as an echo.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Tests"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "SpotifyPlaylistartist": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "SpotifyPlaylisttrack": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "artists": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SpotifyPlaylistartist"
+          }
+        }
+      }
+    },
+    "protosSpotifyPlaylist": {
+      "type": "object",
+      "properties": {
+        "tracks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SpotifyPlaylisttrack"
+          }
+        }
+      },
+      "title": "SpotifyPlaylist can be used to retrieve tracks from the spotify playlist id"
+    },
+    "protosTest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "name should be used as an echo"
+        }
+      },
+      "title": "Test message essentially is an echo that can be used to verify a test response"
+    }
+  }
+}

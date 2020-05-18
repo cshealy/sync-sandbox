@@ -87,9 +87,14 @@ func main() {
 	}).Info("starting gRPC gateway")
 
 	// start our gRPC gateway
-	if err = runGateway(config); err != nil {
+	// TODO: take this mux returned and serve the swagger docs
+	_, err = runGateway(config)
+
+	if err != nil {
 		log.Fatal(err)
 	}
+
+	// TODO: server swagger docs
 }
 
 // RunServer will start a new server and begin listening using the port provided by our config
@@ -114,7 +119,7 @@ func runServer(config Config, spotifyDAO *data.SpotifyDAO) error {
 }
 
 // RunGateway starts to translate RESTful HTTP API into gRPC
-func runGateway(config Config) error {
+func runGateway(config Config) (*runtime.ServeMux, error) {
 
 	// create our context
 	ctx := context.Background()
@@ -127,8 +132,8 @@ func runGateway(config Config) error {
 
 	err := pb.RegisterTestsHandlerFromEndpoint(ctx, mux, fmt.Sprintf(":%d", config.ServerPort), opts)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return http.ListenAndServe(fmt.Sprintf(":%d", config.GatewayPort), mux)
+	return mux, http.ListenAndServe(fmt.Sprintf(":%d", config.GatewayPort), mux)
 }

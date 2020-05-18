@@ -6,4 +6,7 @@ echo "--- Generating gRPC stub ---";
 echo "--- Generating reverse-proxy ---";
 /usr/bin/protoc -I/protobuf -I. --grpc-gateway_out=logtostderr=true:. ./sync.proto;
 
+echo "--- Generating swagger docs ---";
+/usr/bin/protoc -I/protobuf -I. --swagger_out=logtostderr=true:. ./sync.proto
+
 echo "--- Complete ---"
