@@ -15,7 +15,6 @@ services:
     container_name: "gomock"
     working_dir: "/go/src/app"
     entrypoint: ["mockgen", "-source=./data/api.go", "-destination=./data/mocks/dao.go", "-package=data"]
-#    entrypoint: tail -f /dev/null
     volumes:
     - ./:/go/src/app
 
@@ -35,3 +34,14 @@ services:
     ports:
       - 8080:8080
       - 50051:50051
+
+  swagger-docs:
+    image: swaggerapi/swagger-ui:v3.25.3
+    container_name: swagger-docs
+    environment: 
+      - SWAGGER_JSON=/foo/sync.swagger.json
+      - BASE_URL=/swagger 
+    ports: 
+      - 8081:8080
+    volumes:
+      - ./proto:/foo

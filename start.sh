@@ -7,6 +7,7 @@ function usage() {
           --build   builds from docker image
           --compile compiles protobuf files
           --mocks   generates mock go files for testing
+          --swagger serves swagger documentation
           "
   exit 1
 }
@@ -29,6 +30,12 @@ do
     # generate mock files
     docker-compose up --force-recreate --remove-orphans gomock
     # TODO: add mock files needed for future tests
+    break;
+  elif [[ "${arg}" = "--swagger" ]]; then
+    # serve swagger docs
+    docker-compose up -d --force-recreate --remove-orphans swagger-docs
+    echo "--- Serving swagger docs on localhost:8081/swagger ---"
+    # TODO: serve swagger docs on API server using a mux
     break;
   fi
   usage
