@@ -74,7 +74,7 @@ Postman integration tests are documented and found [here](https://github.com/csh
 
 ## gRPC Client ##
 
-Client code can be found [here](https://github.com/cshealy/sync-sandbox/tree/master/client) and can easily be ran with the following command:
+Client code can be found [here](https://github.com/cshealy/sync-sandbox/tree/master/client) and can easily run with the following command:
 
 ```
 sh start.sh --client
