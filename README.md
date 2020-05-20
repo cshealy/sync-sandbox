@@ -72,6 +72,15 @@ Your new mock files should be found in the destination, and can now be used in u
 
 Postman integration tests are documented and found [here](https://github.com/cshealy/sync-sandbox/tree/master/postman).
 
+## gRPC Client ##
+
+Client code can be found [here](https://github.com/cshealy/sync-sandbox/tree/master/client) and can easily be ran with the following command:
+
+```
+sh start.sh --client
+```
+
+
 ## TODO ##
 
 - Automate tests

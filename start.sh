@@ -5,6 +5,7 @@ DEPLOYMENT="sync-sandbox"
 function usage() {
   echo -e "\nUSAGE: sh start.sh [--build, --compile, --mocks]
           --build   builds from docker image
+          --client  builds and runs client container for gRPC calls
           --compile compiles protobuf files
           --mocks   generates mock go files for testing
           --swagger serves swagger documentation
@@ -19,7 +20,11 @@ for arg in "$@"
 do
   if [[ "${arg}" = "--build" ]]; then
     # build from docker image
-    docker build -t sync-sandbox:1.0 .
+    docker build -t sync-sandbox:1.0 --build-arg WORKDIR=/app .
+    break;
+  elif [[ "${arg}" = "--client" ]]; then
+    # build client from docker image
+    docker build -t sync-sandbox-client:1.0 --build-arg WORKDIR=/app/client .
     break;
   elif [[ "${arg}" = "--compile" ]]; then
     # compile proto files
@@ -41,6 +46,12 @@ do
   usage
 done
 
-docker-compose up --force-recreate --remove-orphans sync-sandbox-api
+
+docker-compose up -d --force-recreate --remove-orphans sync-sandbox-api
+
+# start client
+if [[ "${arg}" = "--client" ]]; then
+  docker-compose up --force-recreate --remove-orphans sync-sandbox-client
+fi
 
 echo "--- Complete ---"

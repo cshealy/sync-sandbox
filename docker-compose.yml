@@ -33,8 +33,15 @@ services:
       - SPOTIFY_PLAYLIST_ID=5G34TWU6P2i19eYWzrpj8M
     ports:
       - 8080:8080
-      - 50051:50051
 
+  sync-sandbox-client:  
+    image: sync-sandbox-client:1.0
+    container_name: "sync-sandbox-client"
+    environment:
+      - LOG_LEVEL=info
+      - SERVER_PORT=50051
+
+  # http://localhost:8081/swagger/
   swagger-docs:
     image: swaggerapi/swagger-ui:v3.25.3
     container_name: swagger-docs
