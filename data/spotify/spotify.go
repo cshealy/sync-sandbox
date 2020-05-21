@@ -217,19 +217,19 @@ func (s *SpotifyDAO) GetPlaylist() (*pb.SpotifyPlaylist, error) {
 	}
 
 	// parse the spotify playlist response
-	var spotifyPlaylistTracks []*pb.SpotifyPlaylistTrack
+	var spotifyPlaylistTracks []*pb.Track
 	for _, track := range spotifyPlaylist.Tracks.Items {
 
 		// collect all of the artists for this track
-		var trackArtists []*pb.SpotifyPlaylistArtist
+		var trackArtists []*pb.Artist
 		for _, artist := range track.Track.Artists {
-			trackArtists = append(trackArtists, &pb.SpotifyPlaylistArtist{
+			trackArtists = append(trackArtists, &pb.Artist{
 				Name: artist.Name,
 			})
 		}
 
 		// add a new track to the playlist response
-		spotifyPlaylistTracks = append(spotifyPlaylistTracks, &pb.SpotifyPlaylistTrack{
+		spotifyPlaylistTracks = append(spotifyPlaylistTracks, &pb.Track{
 			Name:    track.Track.Name,
 			Artists: trackArtists,
 		})

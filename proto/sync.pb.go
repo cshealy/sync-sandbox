@@ -65,19 +65,107 @@ func (m *Test) GetName() string {
 	return ""
 }
 
+// singular artist for a track
+type Artist struct {
+	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Artist) Reset()         { *m = Artist{} }
+func (m *Artist) String() string { return proto.CompactTextString(m) }
+func (*Artist) ProtoMessage()    {}
+func (*Artist) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5273b98214de8075, []int{1}
+}
+
+func (m *Artist) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Artist.Unmarshal(m, b)
+}
+func (m *Artist) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Artist.Marshal(b, m, deterministic)
+}
+func (m *Artist) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Artist.Merge(m, src)
+}
+func (m *Artist) XXX_Size() int {
+	return xxx_messageInfo_Artist.Size(m)
+}
+func (m *Artist) XXX_DiscardUnknown() {
+	xxx_messageInfo_Artist.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Artist proto.InternalMessageInfo
+
+func (m *Artist) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+// track composed of it's name and the artists associated
+type Track struct {
+	Name                 string    `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Artists              []*Artist `protobuf:"bytes,2,rep,name=artists,proto3" json:"artists,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
+}
+
+func (m *Track) Reset()         { *m = Track{} }
+func (m *Track) String() string { return proto.CompactTextString(m) }
+func (*Track) ProtoMessage()    {}
+func (*Track) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5273b98214de8075, []int{2}
+}
+
+func (m *Track) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Track.Unmarshal(m, b)
+}
+func (m *Track) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Track.Marshal(b, m, deterministic)
+}
+func (m *Track) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Track.Merge(m, src)
+}
+func (m *Track) XXX_Size() int {
+	return xxx_messageInfo_Track.Size(m)
+}
+func (m *Track) XXX_DiscardUnknown() {
+	xxx_messageInfo_Track.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Track proto.InternalMessageInfo
+
+func (m *Track) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *Track) GetArtists() []*Artist {
+	if m != nil {
+		return m.Artists
+	}
+	return nil
+}
+
 // SpotifyPlaylist can be used to retrieve tracks from the spotify playlist id
 type SpotifyPlaylist struct {
-	Tracks               []*SpotifyPlaylistTrack `protobuf:"bytes,1,rep,name=tracks,proto3" json:"tracks,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
-	XXX_unrecognized     []byte                  `json:"-"`
-	XXX_sizecache        int32                   `json:"-"`
+	Tracks               []*Track `protobuf:"bytes,1,rep,name=tracks,proto3" json:"tracks,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *SpotifyPlaylist) Reset()         { *m = SpotifyPlaylist{} }
 func (m *SpotifyPlaylist) String() string { return proto.CompactTextString(m) }
 func (*SpotifyPlaylist) ProtoMessage()    {}
 func (*SpotifyPlaylist) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5273b98214de8075, []int{1}
+	return fileDescriptor_5273b98214de8075, []int{3}
 }
 
 func (m *SpotifyPlaylist) XXX_Unmarshal(b []byte) error {
@@ -98,128 +186,43 @@ func (m *SpotifyPlaylist) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_SpotifyPlaylist proto.InternalMessageInfo
 
-func (m *SpotifyPlaylist) GetTracks() []*SpotifyPlaylistTrack {
+func (m *SpotifyPlaylist) GetTracks() []*Track {
 	if m != nil {
 		return m.Tracks
 	}
 	return nil
 }
 
-type SpotifyPlaylistArtist struct {
-	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *SpotifyPlaylistArtist) Reset()         { *m = SpotifyPlaylistArtist{} }
-func (m *SpotifyPlaylistArtist) String() string { return proto.CompactTextString(m) }
-func (*SpotifyPlaylistArtist) ProtoMessage()    {}
-func (*SpotifyPlaylistArtist) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5273b98214de8075, []int{1, 0}
-}
-
-func (m *SpotifyPlaylistArtist) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SpotifyPlaylistArtist.Unmarshal(m, b)
-}
-func (m *SpotifyPlaylistArtist) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SpotifyPlaylistArtist.Marshal(b, m, deterministic)
-}
-func (m *SpotifyPlaylistArtist) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SpotifyPlaylistArtist.Merge(m, src)
-}
-func (m *SpotifyPlaylistArtist) XXX_Size() int {
-	return xxx_messageInfo_SpotifyPlaylistArtist.Size(m)
-}
-func (m *SpotifyPlaylistArtist) XXX_DiscardUnknown() {
-	xxx_messageInfo_SpotifyPlaylistArtist.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SpotifyPlaylistArtist proto.InternalMessageInfo
-
-func (m *SpotifyPlaylistArtist) GetName() string {
-	if m != nil {
-		return m.Name
-	}
-	return ""
-}
-
-type SpotifyPlaylistTrack struct {
-	Name                 string                   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Artists              []*SpotifyPlaylistArtist `protobuf:"bytes,2,rep,name=artists,proto3" json:"artists,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
-	XXX_unrecognized     []byte                   `json:"-"`
-	XXX_sizecache        int32                    `json:"-"`
-}
-
-func (m *SpotifyPlaylistTrack) Reset()         { *m = SpotifyPlaylistTrack{} }
-func (m *SpotifyPlaylistTrack) String() string { return proto.CompactTextString(m) }
-func (*SpotifyPlaylistTrack) ProtoMessage()    {}
-func (*SpotifyPlaylistTrack) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5273b98214de8075, []int{1, 1}
-}
-
-func (m *SpotifyPlaylistTrack) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SpotifyPlaylistTrack.Unmarshal(m, b)
-}
-func (m *SpotifyPlaylistTrack) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SpotifyPlaylistTrack.Marshal(b, m, deterministic)
-}
-func (m *SpotifyPlaylistTrack) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SpotifyPlaylistTrack.Merge(m, src)
-}
-func (m *SpotifyPlaylistTrack) XXX_Size() int {
-	return xxx_messageInfo_SpotifyPlaylistTrack.Size(m)
-}
-func (m *SpotifyPlaylistTrack) XXX_DiscardUnknown() {
-	xxx_messageInfo_SpotifyPlaylistTrack.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SpotifyPlaylistTrack proto.InternalMessageInfo
-
-func (m *SpotifyPlaylistTrack) GetName() string {
-	if m != nil {
-		return m.Name
-	}
-	return ""
-}
-
-func (m *SpotifyPlaylistTrack) GetArtists() []*SpotifyPlaylistArtist {
-	if m != nil {
-		return m.Artists
-	}
-	return nil
-}
-
 func init() {
 	proto.RegisterType((*Test)(nil), "protos.Test")
+	proto.RegisterType((*Artist)(nil), "protos.artist")
+	proto.RegisterType((*Track)(nil), "protos.track")
 	proto.RegisterType((*SpotifyPlaylist)(nil), "protos.SpotifyPlaylist")
-	proto.RegisterType((*SpotifyPlaylistArtist)(nil), "protos.SpotifyPlaylist.artist")
-	proto.RegisterType((*SpotifyPlaylistTrack)(nil), "protos.SpotifyPlaylist.track")
 }
 
 func init() { proto.RegisterFile("sync.proto", fileDescriptor_5273b98214de8075) }
 
 var fileDescriptor_5273b98214de8075 = []byte{
-	// 281 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x91, 0x41, 0x4e, 0xc3, 0x30,
-	0x10, 0x45, 0x95, 0xd2, 0x24, 0x62, 0x00, 0x21, 0x79, 0x01, 0x91, 0x29, 0x28, 0xca, 0xaa, 0x2b,
-	0x5b, 0x2a, 0x20, 0x71, 0x01, 0xd4, 0x2d, 0x0a, 0x70, 0x00, 0xb7, 0x72, 0xa3, 0x88, 0xd4, 0xb6,
-	0x32, 0xc3, 0x22, 0x5b, 0xae, 0xc0, 0x1d, 0xb8, 0x05, 0xa7, 0xe0, 0x0a, 0x1c, 0x04, 0xc5, 0x4e,
-	0x16, 0x54, 0xed, 0xca, 0x1e, 0xfd, 0x37, 0xf3, 0x3d, 0xdf, 0x00, 0xd8, 0x99, 0xb5, 0x70, 0xad,
-	0x25, 0xcb, 0x12, 0x7f, 0x20, 0x9f, 0x55, 0xd6, 0x56, 0x8d, 0x96, 0xca, 0xd5, 0x52, 0x19, 0x63,
-	0x49, 0x51, 0x6d, 0x0d, 0x06, 0x8a, 0x5f, 0x0d, 0xaa, 0xaf, 0x56, 0xef, 0x1b, 0xa9, 0xb7, 0x8e,
-	0xba, 0x20, 0x16, 0x1c, 0xa6, 0x2f, 0x1a, 0x89, 0x31, 0x98, 0x1a, 0xb5, 0xd5, 0x59, 0x94, 0x47,
-	0xf3, 0xe3, 0xd2, 0xdf, 0x8b, 0xef, 0x08, 0xce, 0x9f, 0x9d, 0xa5, 0x7a, 0xd3, 0x3d, 0x35, 0xaa,
-	0x6b, 0x6a, 0x24, 0x76, 0x0f, 0x09, 0xb5, 0x6a, 0xfd, 0x86, 0x59, 0x94, 0x1f, 0xcd, 0x4f, 0x16,
-	0xd7, 0x61, 0x0e, 0x8a, 0x1d, 0x50, 0x78, 0xaa, 0x1c, 0x60, 0x3e, 0x83, 0x44, 0xb5, 0x54, 0xef,
-	0x37, 0xe2, 0xaf, 0x10, 0x7b, 0x6e, 0x9f, 0xc8, 0x1e, 0x20, 0x0d, 0xad, 0x98, 0x4d, 0xbc, 0xe5,
-	0xcd, 0x21, 0xcb, 0x80, 0x95, 0x23, 0xbe, 0xf8, 0x8a, 0x20, 0xee, 0x97, 0x43, 0x76, 0x07, 0xe9,
-	0x52, 0x93, 0x5f, 0xf4, 0x74, 0xec, 0xee, 0x2b, 0xfe, 0xaf, 0x2a, 0xce, 0x3e, 0x7e, 0x7e, 0x3f,
-	0x27, 0x29, 0x8b, 0x25, 0xf5, 0x68, 0x05, 0x6c, 0xa9, 0x69, 0x37, 0x81, 0x0b, 0x11, 0xf2, 0x14,
-	0x63, 0x9e, 0xe2, 0xb1, 0xcf, 0x93, 0x5f, 0x1e, 0x78, 0x56, 0x91, 0xfb, 0xa9, 0x9c, 0x65, 0x12,
-	0x83, 0x22, 0xdd, 0x20, 0xc9, 0x90, 0xce, 0x2a, 0xfc, 0xe3, 0xed, 0x5f, 0x00, 0x00, 0x00, 0xff,
-	0xff, 0xce, 0x9a, 0x14, 0x92, 0xdc, 0x01, 0x00, 0x00,
+	// 293 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x91, 0x41, 0x4e, 0xeb, 0x30,
+	0x10, 0x86, 0x5f, 0xfa, 0x9a, 0x44, 0x0c, 0x14, 0x24, 0x2f, 0x20, 0x32, 0x5d, 0x44, 0x96, 0x90,
+	0xb2, 0x8a, 0x51, 0x61, 0xc1, 0x05, 0xa2, 0x6e, 0x51, 0xca, 0x05, 0xdc, 0xca, 0x8d, 0x22, 0x92,
+	0x38, 0x8a, 0x87, 0x45, 0xb6, 0x5c, 0x81, 0xa3, 0x71, 0x05, 0xb6, 0xdc, 0x01, 0xd9, 0x8e, 0x17,
+	0x2d, 0x74, 0x95, 0xcc, 0x7c, 0xf3, 0xcf, 0x3f, 0x33, 0x06, 0xd0, 0x63, 0xb7, 0xcb, 0xfb, 0x41,
+	0xa1, 0x22, 0x91, 0xfd, 0x68, 0xba, 0xac, 0x94, 0xaa, 0x1a, 0xc9, 0x45, 0x5f, 0x73, 0xd1, 0x75,
+	0x0a, 0x05, 0xd6, 0xaa, 0xd3, 0xae, 0x8a, 0xde, 0x4e, 0xd4, 0x46, 0xdb, 0xb7, 0x3d, 0x97, 0x6d,
+	0x8f, 0xa3, 0x83, 0x8c, 0xc2, 0xfc, 0x45, 0x6a, 0x24, 0x04, 0xe6, 0x9d, 0x68, 0x65, 0x12, 0xa4,
+	0x41, 0x76, 0x56, 0xda, 0x7f, 0xb6, 0x84, 0x48, 0x0c, 0x58, 0x9f, 0xa0, 0x05, 0x84, 0x38, 0x88,
+	0xdd, 0xeb, 0x5f, 0x90, 0x64, 0x10, 0x3b, 0xa9, 0x4e, 0x66, 0xe9, 0xff, 0xec, 0x7c, 0x75, 0xe9,
+	0xfc, 0x74, 0xee, 0xd2, 0xa5, 0xc7, 0xec, 0x09, 0xae, 0x36, 0xbd, 0xc2, 0x7a, 0x3f, 0x3e, 0x37,
+	0x62, 0x6c, 0x8c, 0xdb, 0x1d, 0x44, 0xb6, 0xb3, 0x4e, 0x02, 0xab, 0x5d, 0x78, 0xad, 0xcd, 0x96,
+	0x13, 0x5c, 0x7d, 0x07, 0x10, 0x9a, 0xd9, 0x35, 0x79, 0x84, 0x78, 0x2d, 0xd1, 0xee, 0x71, 0xe1,
+	0x6b, 0x4d, 0x44, 0x0f, 0x22, 0xb6, 0x78, 0xff, 0xfc, 0xfa, 0x98, 0xc5, 0x24, 0xe4, 0x68, 0x4a,
+	0x2b, 0x20, 0x6b, 0x89, 0xc7, 0xe6, 0xd7, 0xb9, 0x3b, 0x57, 0xee, 0xcf, 0x95, 0x17, 0xe6, 0x5c,
+	0xf4, 0xc6, 0xb7, 0x3a, 0x12, 0xb0, 0xd4, 0x76, 0xa5, 0x24, 0xe1, 0xda, 0x11, 0xde, 0x4f, 0x88,
+	0xbb, 0x41, 0x49, 0x01, 0xc9, 0x6f, 0xa3, 0x0d, 0x0e, 0x52, 0xb4, 0x27, 0xed, 0x0e, 0x77, 0x66,
+	0xff, 0xee, 0x83, 0xad, 0x7b, 0xed, 0x87, 0x9f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x16, 0x19, 0xd5,
+	0x71, 0x02, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -238,6 +241,8 @@ type TestsClient interface {
 	GetTest(ctx context.Context, in *Test, opts ...grpc.CallOption) (*Test, error)
 	//  Get some test tracks from spotify that will eventually be synced
 	GetSpotifyPlaylist(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*SpotifyPlaylist, error)
+	// Test for server-side streaming
+	GetSpotifyPlaylistStream(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (Tests_GetSpotifyPlaylistStreamClient, error)
 }
 
 type testsClient struct {
@@ -266,12 +271,46 @@ func (c *testsClient) GetSpotifyPlaylist(ctx context.Context, in *empty.Empty, o
 	return out, nil
 }
 
+func (c *testsClient) GetSpotifyPlaylistStream(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (Tests_GetSpotifyPlaylistStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Tests_serviceDesc.Streams[0], "/protos.Tests/GetSpotifyPlaylistStream", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &testsGetSpotifyPlaylistStreamClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Tests_GetSpotifyPlaylistStreamClient interface {
+	Recv() (*Track, error)
+	grpc.ClientStream
+}
+
+type testsGetSpotifyPlaylistStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *testsGetSpotifyPlaylistStreamClient) Recv() (*Track, error) {
+	m := new(Track)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // TestsServer is the server API for Tests service.
 type TestsServer interface {
 	// Stub test
 	GetTest(context.Context, *Test) (*Test, error)
 	//  Get some test tracks from spotify that will eventually be synced
 	GetSpotifyPlaylist(context.Context, *empty.Empty) (*SpotifyPlaylist, error)
+	// Test for server-side streaming
+	GetSpotifyPlaylistStream(*empty.Empty, Tests_GetSpotifyPlaylistStreamServer) error
 }
 
 func RegisterTestsServer(s *grpc.Server, srv TestsServer) {
@@ -314,6 +353,27 @@ func _Tests_GetSpotifyPlaylist_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Tests_GetSpotifyPlaylistStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(empty.Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(TestsServer).GetSpotifyPlaylistStream(m, &testsGetSpotifyPlaylistStreamServer{stream})
+}
+
+type Tests_GetSpotifyPlaylistStreamServer interface {
+	Send(*Track) error
+	grpc.ServerStream
+}
+
+type testsGetSpotifyPlaylistStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *testsGetSpotifyPlaylistStreamServer) Send(m *Track) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 var _Tests_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "protos.Tests",
 	HandlerType: (*TestsServer)(nil),
@@ -327,6 +387,12 @@ var _Tests_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Tests_GetSpotifyPlaylist_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GetSpotifyPlaylistStream",
+			Handler:       _Tests_GetSpotifyPlaylistStream_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "sync.proto",
 }

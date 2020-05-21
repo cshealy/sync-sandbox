@@ -18,6 +18,10 @@ service Tests {
       get: "/spotify/playlist/tracks"
     };
   }
+
+  // Test for server-side streaming  
+  rpc GetSpotifyPlaylistStream(google.protobuf.Empty) returns (stream track) {}
+
 }
 
 // Test message essentially is an echo that can be used to verify a test response
@@ -28,17 +32,18 @@ message Test {
 
 }
 
+// singular artist for a track
+message artist {
+  string name = 1;
+}
+
+// track composed of it's name and the artists associated
+message track {
+  string name = 1;
+  repeated artist artists = 2;
+}
+
 // SpotifyPlaylist can be used to retrieve tracks from the spotify playlist id
 message SpotifyPlaylist {
-
-  message artist {
-    string name = 1;
-  }
-
-  message track {
-    string name = 1;
-    repeated artist artists = 2;
-  }
-
   repeated track tracks = 1;
 }

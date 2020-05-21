@@ -60,35 +60,13 @@
     }
   },
   "definitions": {
-    "SpotifyPlaylistartist": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "SpotifyPlaylisttrack": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "artists": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/SpotifyPlaylistartist"
-          }
-        }
-      }
-    },
     "protosSpotifyPlaylist": {
       "type": "object",
       "properties": {
         "tracks": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/SpotifyPlaylisttrack"
+            "$ref": "#/definitions/protostrack"
           }
         }
       },
@@ -103,6 +81,30 @@
         }
       },
       "title": "Test message essentially is an echo that can be used to verify a test response"
+    },
+    "protosartist": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "title": "singular artist for a track"
+    },
+    "protostrack": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "artists": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protosartist"
+          }
+        }
+      },
+      "title": "track composed of it's name and the artists associated"
     }
   }
 }
