@@ -58,8 +58,7 @@ func (svc *TestService) GetSpotifyPlaylistStream(_ *empty.Empty, stream pb.Tests
 	}
 
 	// iterate over each track and stream it back to the client
-	for _, track := range spotifyPlaylist.Tracks {
-
+	for _, track := range spotifyPlaylist.GetTracks() {
 		// stream the track back to our client
 		if err := stream.Send(track); err != nil {
 			return err

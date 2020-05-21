@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 	"time"
@@ -11,6 +12,7 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // 12 factor config for establishing connections and other various attributes with env vars
@@ -81,4 +83,34 @@ func main() {
 	log.WithFields(log.Fields{
 		"GetTest": echo,
 	}).Info("received test")
+
+	// call GetSpotifyPlaylistStream via gRPC
+	spotifyPlaylistStream, err := client.GetSpotifyPlaylistStream(ctx, &emptypb.Empty{})
+
+	if err != nil {
+		log.Fatalf("failed to call GetTest: %v", err)
+	}
+
+	var tracks []*pb.Track
+
+	// read from the stream
+	for {
+		track, err := spotifyPlaylistStream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatalf("failed to call GetSpotifyPlaylistStream: %v", err)
+		}
+		tracks = append(tracks, track)
+	}
+
+	// compose the playlist
+	streamedPlaylist := &pb.SpotifyPlaylist{
+		Tracks: tracks,
+	}
+
+	log.WithFields(log.Fields{
+		"streamed_playlist": streamedPlaylist,
+	}).Info("received GetSpotifyPlaylistStream")
 }
