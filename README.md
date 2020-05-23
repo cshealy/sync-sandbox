@@ -83,6 +83,8 @@ sh start.sh --client
 
 ## TODO ##
 
+- Client-side streaming
+- Bidirectional streaming
 - Automate tests
 - Swagger docs
 - Setup sync logic
