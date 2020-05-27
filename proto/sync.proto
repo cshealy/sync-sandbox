@@ -22,6 +22,9 @@ service Tests {
   // Test for server-side streaming  
   rpc GetSpotifyPlaylistStream(google.protobuf.Empty) returns (stream track) {}
 
+  // Test for client-side streaming
+  rpc GetTestStream(stream Test) returns (Test) {}
+
 }
 
 // Test message essentially is an echo that can be used to verify a test response
