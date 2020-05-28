@@ -23,7 +23,7 @@ service Tests {
   rpc GetSpotifyPlaylistStream(google.protobuf.Empty) returns (stream track) {}
 
   // Test for client-side streaming
-  rpc GetTestStream(stream Test) returns (Test) {}
+  rpc GetTestStream(stream Test) returns (MultiTest) {}
 
 }
 
@@ -33,6 +33,11 @@ message Test {
   // name should be used as an echo
   string name = 1;
 
+}
+
+// MultiTest message is intended to be used as an array of client streamed Tests
+message MultiTest {
+  repeated string name = 1;
 }
 
 // singular artist for a track

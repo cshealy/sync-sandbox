@@ -60,6 +60,18 @@
     }
   },
   "definitions": {
+    "protosMultiTest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "title": "MultiTest message is intended to be used as an array of client streamed Tests"
+    },
     "protosSpotifyPlaylist": {
       "type": "object",
       "properties": {
