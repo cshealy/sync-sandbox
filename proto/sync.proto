@@ -23,7 +23,10 @@ service Tests {
   rpc GetSpotifyPlaylistStream(google.protobuf.Empty) returns (stream track) {}
 
   // Test for client-side streaming
-  rpc GetTestStream(stream Test) returns (MultiTest) {}
+  rpc GetClientStream(stream Test) returns (MultiTest) {}
+
+  // Test for bidirectional streaming
+  rpc GetBidirectionalStream(stream Test) returns (stream Test) {}
 
 }
 
