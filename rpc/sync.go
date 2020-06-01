@@ -3,6 +3,7 @@ package rpc
 import (
 	"context"
 	"fmt"
+	"io"
 
 	"google.golang.org/grpc/codes"
 
@@ -10,7 +11,6 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 
 	pb "github.com/cshealy/sync-sandbox/proto"
-	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/status"
 )
 
@@ -36,8 +36,6 @@ func (svc *TestService) GetSpotifyPlaylist(_ context.Context, _ *empty.Empty) (*
 
 // GetTest is an echo endpoint until I put more interesting logic into here
 func (svc *TestService) GetTest(ctx context.Context, test *pb.Test) (*pb.Test, error) {
-	log.Infof("%+v", ctx)
-	log.Infof("%+v", test)
 	// TODO: fill this out with logic
 	return &pb.Test{
 		Name: test.GetName(),
@@ -64,5 +62,40 @@ func (svc *TestService) GetSpotifyPlaylistStream(_ *empty.Empty, stream pb.Tests
 			return err
 		}
 	}
+	return nil
+}
+
+// GetClientStream acts as GetTest does, but as a client stream
+func (svc *TestService) GetClientStream(stream pb.Tests_GetClientStreamServer) error {
+
+	// create a slice of client streamed tests
+	var multiTest []string
+
+	// loop until the client is finished streaming
+	for {
+
+		// get the streamed test
+		test, err := stream.Recv()
+
+		// if the client is done streaming, return our multi tests
+		if err == io.EOF {
+			return stream.SendAndClose(&pb.MultiTest{
+				Name: multiTest,
+			})
+		}
+
+		// if we hit an error while reading from our client stream, return the error
+		if err != nil {
+			return err
+		}
+
+		// append a test to our response
+		multiTest = append(multiTest, test.Name)
+	}
+}
+
+// GetBidirectionalStream will act the same as GetTest does, but with client and server streaming
+func (svc *TestService) GetBidirectionalStream(stream pb.Tests_GetBidirectionalStreamServer) error {
+	// TODO: fill out
 	return nil
 }

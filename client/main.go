@@ -113,4 +113,39 @@ func main() {
 	log.WithFields(log.Fields{
 		"streamed_playlist": streamedPlaylist,
 	}).Info("received GetSpotifyPlaylistStream")
+
+	// client-side streaming
+	var tests []*pb.Test
+	for i := 0; i < 10; i++ {
+		tests = append(tests, &pb.Test{
+			Name: fmt.Sprintf("Test - %d", i),
+		})
+	}
+	stream, err := client.GetClientStream(context.Background())
+	if err != nil {
+		log.Fatalf("failed to call GetClientStream: %v", err)
+	}
+
+	// send off those tests
+	for _, test := range tests {
+		if err := stream.Send(test); err != nil {
+			if err == io.EOF {
+				break
+			}
+			log.Fatalf("failed to send %v to GetClientStream - %v", test, err)
+		}
+	}
+
+	// close the client stream
+	testEcho, err := stream.CloseAndRecv()
+
+	if err != nil {
+		log.Fatalf("failed to close stream for GetClientStream")
+	}
+
+	// log the results
+	log.WithFields(log.Fields{
+		"tests": testEcho,
+	}).Info("received GetClientStream")
+
 }
