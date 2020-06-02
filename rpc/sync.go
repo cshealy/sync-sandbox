@@ -96,6 +96,25 @@ func (svc *TestService) GetClientStream(stream pb.Tests_GetClientStreamServer) e
 
 // GetBidirectionalStream will act the same as GetTest does, but with client and server streaming
 func (svc *TestService) GetBidirectionalStream(stream pb.Tests_GetBidirectionalStreamServer) error {
-	// TODO: fill out
-	return nil
+	for {
+
+		// get the streamed test
+		test, err := stream.Recv()
+
+		// if the client is done streaming, return our multi tests
+		if err == io.EOF {
+			return nil
+		}
+
+		// if we hit an error while reading from our client stream, return the error
+		if err != nil {
+			return err
+		}
+
+		// stream tests back to client
+		fmt.Printf("sending back: %s", test)
+		if err := stream.Send(test); err != nil {
+			return err
+		}
+	}
 }

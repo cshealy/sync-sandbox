@@ -148,4 +148,39 @@ func main() {
 		"tests": testEcho,
 	}).Info("received GetClientStream")
 
+	// bidirectional streaming
+	bidirectionalStream, err := client.GetBidirectionalStream(context.Background())
+
+	// wait channel
+	waitc := make(chan struct{})
+
+	// go routine to receive response from server stream
+	go func() {
+		for {
+			test, err := bidirectionalStream.Recv()
+
+			if err == io.EOF {
+				// read done.
+				close(waitc)
+				return
+			}
+			if err != nil {
+				log.Fatalf("unable to get test: %s", err)
+			}
+			log.WithFields(log.Fields{
+				"test": test,
+			}).Info("received test from server")
+		}
+	}()
+
+	// stream tests to server
+	for _, test := range tests {
+		if err := bidirectionalStream.Send(test); err != nil {
+			log.Fatalf("failed to send test: %s", err)
+		}
+	}
+
+	// close client stream
+	bidirectionalStream.CloseSend()
+	<-waitc
 }
