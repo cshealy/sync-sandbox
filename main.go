@@ -127,13 +127,23 @@ func runGateway(config Config) (*runtime.ServeMux, error) {
 	defer cancel()
 
 	// create the multiplexer
-	mux := runtime.NewServeMux()
+	rmux := runtime.NewServeMux()
+
+	// Serve the swagger-ui and swagger file
+	mux := http.NewServeMux()
+	mux.Handle("/", rmux)
+	mux.HandleFunc("/sync.swagger.json", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "proto/sync.swagger.json")
+	})
+	fs := http.FileServer(http.Dir("proto"))
+	mux.Handle("/swagger-ui/", http.StripPrefix("/swagger-ui", fs))
+
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 
-	err := pb.RegisterTestsHandlerFromEndpoint(ctx, mux, fmt.Sprintf(":%d", config.ServerPort), opts)
+	err := pb.RegisterTestsHandlerFromEndpoint(ctx, rmux, fmt.Sprintf(":%d", config.ServerPort), opts)
 	if err != nil {
 		return nil, err
 	}
 
-	return mux, http.ListenAndServe(fmt.Sprintf(":%d", config.GatewayPort), mux)
+	return rmux, http.ListenAndServe(fmt.Sprintf(":%d", config.GatewayPort), rmux)
 }
