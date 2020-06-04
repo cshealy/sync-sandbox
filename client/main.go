@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"io"
 	"os"
 	"strings"
 	"time"
@@ -12,7 +11,6 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // 12 factor config for establishing connections and other various attributes with env vars
@@ -64,123 +62,35 @@ func main() {
 	}
 	defer conn.Close()
 
-	// create a client to communicate via gRPC
-	client := pb.NewTestsClient(conn)
-
 	// create context with a reasonable timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	// call GetTest via gRPC
-	echo, err := client.GetTest(ctx, &pb.Test{
-		Name: "this is a test",
-	})
+	// create a client to communicate via gRPC
+	client := NewClient(ctx, pb.NewTestsClient(conn))
 
-	if err != nil {
-		log.Fatalf("failed to call GetTest: %v", err)
-	}
+	// call unary RPC test
+	unaryResponse := client.GetUnaryTest("This is a test")
 
 	log.WithFields(log.Fields{
-		"GetTest": echo,
+		"GetTest": unaryResponse,
 	}).Info("received test")
 
 	// call GetSpotifyPlaylistStream via gRPC
-	spotifyPlaylistStream, err := client.GetSpotifyPlaylistStream(ctx, &emptypb.Empty{})
-
-	if err != nil {
-		log.Fatalf("failed to call GetTest: %v", err)
-	}
-
-	var tracks []*pb.Track
-
-	// read from the stream
-	for {
-		track, err := spotifyPlaylistStream.Recv()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			log.Fatalf("failed to call GetSpotifyPlaylistStream: %v", err)
-		}
-		tracks = append(tracks, track)
-	}
-
-	// compose the playlist
-	streamedPlaylist := &pb.SpotifyPlaylist{
-		Tracks: tracks,
-	}
+	serverStreamResponse := client.GetServerStreamPlaylist()
 
 	log.WithFields(log.Fields{
-		"streamed_playlist": streamedPlaylist,
+		"streamed_playlist": serverStreamResponse,
 	}).Info("received GetSpotifyPlaylistStream")
 
 	// client-side streaming
-	var tests []*pb.Test
-	for i := 0; i < 10; i++ {
-		tests = append(tests, &pb.Test{
-			Name: fmt.Sprintf("Test - %d", i),
-		})
-	}
-	stream, err := client.GetClientStream(context.Background())
-	if err != nil {
-		log.Fatalf("failed to call GetClientStream: %v", err)
-	}
-
-	// send off those tests
-	for _, test := range tests {
-		if err := stream.Send(test); err != nil {
-			if err == io.EOF {
-				break
-			}
-			log.Fatalf("failed to send %v to GetClientStream - %v", test, err)
-		}
-	}
-
-	// close the client stream
-	testEcho, err := stream.CloseAndRecv()
-
-	if err != nil {
-		log.Fatalf("failed to close stream for GetClientStream")
-	}
+	clientStreamResponse := client.GetClientStream()
 
 	// log the results
 	log.WithFields(log.Fields{
-		"tests": testEcho,
+		"tests": clientStreamResponse,
 	}).Info("received GetClientStream")
 
 	// bidirectional streaming
-	bidirectionalStream, err := client.GetBidirectionalStream(context.Background())
-
-	// wait channel
-	waitc := make(chan struct{})
-
-	// go routine to receive response from server stream
-	go func() {
-		for {
-			test, err := bidirectionalStream.Recv()
-
-			if err == io.EOF {
-				// read done.
-				close(waitc)
-				return
-			}
-			if err != nil {
-				log.Fatalf("unable to get test: %s", err)
-			}
-			log.WithFields(log.Fields{
-				"test": test,
-			}).Info("received test from server")
-		}
-	}()
-
-	// stream tests to server
-	for _, test := range tests {
-		if err := bidirectionalStream.Send(test); err != nil {
-			log.Fatalf("failed to send test: %s", err)
-		}
-	}
-
-	// close client stream
-	bidirectionalStream.CloseSend()
-	<-waitc
+	client.GetBidirectionalStream()
 }
