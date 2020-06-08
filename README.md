@@ -80,11 +80,11 @@ Client code can be found [here](https://github.com/cshealy/sync-sandbox/tree/mas
 sh start.sh --client
 ```
 
+The client container will perform various gRPC test calls such as: unary, server-streaming, client-streaming, and bidirectional-streaming.
+
 
 ## TODO ##
 
-- Client-side streaming
-- Bidirectional streaming
 - Automate tests
 - Swagger docs
 - Setup sync logic
