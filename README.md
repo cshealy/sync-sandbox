@@ -85,7 +85,7 @@ The client container will perform various gRPC test calls such as: unary, server
 
 ## TODO ##
 
-- Automate tests
+- Automate tests (Cloud-based CI)
 - Swagger docs
 - Setup sync logic
 - Metrics
